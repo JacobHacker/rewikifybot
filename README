@@ -1,7 +1,10 @@
+Note: You must link/copy these files to the corresponding pywikipedia directory, I
+am open to suggestions as to how to do this without linking.
+
 This requires the pyWikipedia bot framework, you can pull from them at:
 http://svn.wikimedia.org/svnroot/pywikipedia/trunk/pywikipedia
 
-You can use the git-svn tool to pull from themif you don't want to use svn.
+You can use the git-svn tool to pull from them if you don't want to use svn.
 
 This requires the pyWikipedia bot framework. This bot looks through a page, 
 and checks for links, if a link is found it searches for the link on wikibooks, 
