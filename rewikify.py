@@ -13,12 +13,13 @@
 #
 # Distributed under the terms of the MIT license.
 #
-__version__ = '$Id: basic.py 9359 2011-07-10 12:22:39Z xqt $'
+__version__ = '$Id: rewikify.py 9359 2011-07-10 12:22:39Z xqt $'
 #
+
+import re, sys
 
 import wikipedia as pywikibot
 import pagegenerators 
-import re, sys
 from pywikibot import i18n
 
 from weblinkchecker import WeblinkCheckerRobot
@@ -80,20 +81,6 @@ class DeWikify:
 		if link.find("|") != -1:
 			return link[ :link.find("|")]
 		else: return link
-	"""
-	def citeName(cite):
-		cite = cite.strip('{')
-		cite = cite.strip('}')
-		if link.find("|") != -1:
-			return link[ link.find("|")+1:]
-		else: return None
-	def linkURL(link):
-		link = link.strip('[')
-		link = link.strip(']')
-		if link.find("|") != -1:
-			return link[ :link.find("|")]
-		else: return link
-	"""	
 	
 	text = self.load(page)
 	newText = text
