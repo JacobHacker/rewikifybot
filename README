@@ -1,0 +1,12 @@
+This requires the pyWikipedia bot framework, you can pull from them at:
+http://svn.wikimedia.org/svnroot/pywikipedia/trunk/pywikipedia
+
+You can use the git-svn tool to pull from themif you don't want to use svn.
+
+This requires the pyWikipedia bot framework. This bot looks through a page, 
+and checks for links, if a link is found it searches for the link on wikibooks, 
+if it's not found there it looks on wikipedia, then finally if nothing is 
+found there, it removes the link, this is fairly site specific, and then very 
+user specific. 
+
+ReWikify Bot is under the MIT license, available in the MIT_license file.
