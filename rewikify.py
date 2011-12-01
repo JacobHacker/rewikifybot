@@ -89,15 +89,13 @@ class DeWikify:
 	cites = []
 	c = -1
 	l = -1
-	#I would like to remove these, and have the program loop through after
-	#it finds the corresponding link/cite/
-	isLink = False
-	isCite = False
 	for i in range( len(text) ):
 		"""
 		"" Check for links
 		"""
 		if text[i] == '[' and text[i+1] == '[':
+			if(text[i+2] == '#'):
+				continue
 			link = ""
 			while text[i] != ']' and text[i-1] != ']':
 				link += text[i]
@@ -141,6 +139,8 @@ class DeWikify:
 	
 	checkWikipediaLinks = []
 	
+	#Check if the page exists on wikibooks, if not send it off to a list 
+	#that checks wikipedia for the page
 	i = 0
 	for Page in linkPages:
 		if Page.exists():
@@ -165,18 +165,30 @@ class DeWikify:
 			print "Page \"" + Page.title() + "\" does not exist on wikipedia."
 			redlinks.append(checkWikipediaLinks[i])
 		i += 1
-	print redlinks
 	
+	"""
+	""Quicky hack
+	"""
+	for i in range( len(wikipediaLinks) ):
+		wikipediaLinks[i] = wikipediaLinks[i].strip('[')
+		wikipediaLinks[i] = wikipediaLinks[i].strip(']')
+		wikipediaLinks[i] = "[[" + wikipediaLinks[i] + "]]"
+	
+	print wikipediaLinks
+	"""for Page in wikipediaLinkPages:
+	"""
 	"""
 	"" Edit the page to reflect findings
 	"""
 	
 	for link in wikipediaLinks:
 		if linkName(link) == None:
+			print linkURL(link)
 			newLink = "[[w:" + linkURL(link) + "|" + linkURL(link) + "]]"
 			newText = newText.replace(link, newLink)
 		else:
-			newText = newText.replace(link, linkName(link) )
+			newText = newText.replace(link, "[[w:" + linkURL(link) + "|" + linkName(link) + "]]" )
+			print "-" + linkName(link)
 
 	for link in redlinks:
 		if linkName(link) == None:
