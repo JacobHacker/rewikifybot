@@ -16,8 +16,8 @@
 __version__ = '$Id: rewikify.py 9359 2011-07-10 12:22:39Z xqt $'
 #
 
-import re, sys
-
+import re, sys, os
+sys.path.append(os.environ['HOME'] + '/dev/pywikipedia')
 import wikipedia as pywikibot
 import pagegenerators 
 from pywikibot import i18n
@@ -68,6 +68,12 @@ class DeWikify:
 	""  exist on Wikipedia, if not removes the link entirely. Also remove 
 	""  all "citation needed" tags.
 	"""
+	linksFoundInPage = []
+	wikibooksPages = []
+	wikipediaPages = []
+	
+	linksOnWikipedia = []
+	redlinks = []
 	
 	def linkName(link):
 		link = link.strip('[')
@@ -85,7 +91,6 @@ class DeWikify:
 	text = self.load(page)
 	newText = text
 	
-	links = []
 	cites = []
 	c = -1
 	l = -1
@@ -102,7 +107,8 @@ class DeWikify:
 				i += 1
 			if linkURL(link)[:2] == "w:" or linkURL(link)[:5] == "Image" or linkURL(link)[:4] == "File":
 				continue
-			links.append(link)
+			link += "]]"
+			linksFoundInPage.append(link)
 		"""
 		"" Check for citations
 		"""
@@ -122,66 +128,50 @@ class DeWikify:
 				if cite == "{{Citation needed}}":
 					cites.append(cite)
 	
-	print cites
+	pregen = pagegenerators.PreloadingGenerator(self.generator)
 	
-	# Links not on wikibooks, but on wikipedia
-	wikipediaLinks = []
-	# Not on wikibooks or wikipedia
-	redlinks = []
+	# populate wikibooksPages
+	for link in linksFoundInPage:
+		wikibooksPages.append( pywikibot.Page( page.site(), linkURL(link) ) )
+	pywikibot.getall(page.site(), wikibooksPages)
 	
-	wikipage = []
+	# populate wikipediaPages
+	wikipediaSite = pywikibot.getSite(page.site().language(), 'wikipedia')
+	for link in linksFoundInPage:
+		wikipediaPages.append( pywikibot.Page( wikipediaSite, linkURL(link)) )
+	pywikibot.getall(wikipediaSite, wikipediaPages)
 	
-	for link in links:
-		wikipage.append( pywikibot.Page( page.site(), linkURL(link)) )
-	
-	pregen = pagegenerators.PreloadingGenerator(self.generator);
-	linkPages = pregen.preload(wikipage);
-	
-	checkWikipediaLinks = []
-	
-	#Check if the page exists on wikibooks, if not send it off to a list 
-	#that checks wikipedia for the page
+	# sort links, sending to linksOnWikibooks, linksOnWikipedia, or redlinks
 	i = 0
-	for Page in linkPages:
-		if Page.exists():
-			print "Page \"" + Page.title() + "\" exists on wikibooks."
+	for link in linksFoundInPage:
+		if wikibooksPages[i].exists():
+			print "Page \"" + wikibooksPages[i].title() + "\" exists on wikibooks."
+			# no need to keep a list links on wikipedia
 		else:
-			print "Page \"" + Page.title() + "\" does not exist on wikibooks."
-			checkWikipediaLinks.append(links[i])
+			#check on wikipedia
+			if wikipediaPages[i].exists():
+				print "Page \"" + wikipediaPages[i].title() + "\" exists on wikipedia."
+				linksOnWikipedia.append( linksFoundInPage[i] )
+			else:
+				print "Could not find page \"" + wikibooksPages[i].title() + "\" removing."
+				redlinks.append( linksFoundInPage[i] )
 		i += 1
 	
-	wikipediaLPages = []
-	for link in checkWikipediaLinks:
-		wikipediaLPages.append( pywikibot.Page( pywikibot.getSite(page.site().language(), 'wikipedia'), linkURL(link)) )
+	#
+	# Duct tape
+	#
+	#print "linksOnWikipedia"
+	#print linksOnWikipedia
+	#for i in range( len(linksOnWikipedia) ):
+	#	linksOnWikipedia[i] = linksOnWikipedia[i].strip('[')
+	#	linksOnWikipedia[i] = linksOnWikipedia[i].strip(']')
+	#	linksOnWikipedia[i] = "[[" + linksOnWikipedia[i] + "]]"
 	
-	wikipediaLinkPages = pregen.preload(wikipediaLPages);
+	#
+	# remove redlinks, and change wikipedia links to use w:
+	#
 	
-	i = 0
-	for Page in wikipediaLinkPages:
-		if Page.exists():
-			print "Page \"" + Page.title() + "\" exists on wikipedia."
-			wikipediaLinks.append( checkWikipediaLinks[i] )
-		else:
-			print "Page \"" + Page.title() + "\" does not exist on wikipedia."
-			redlinks.append(checkWikipediaLinks[i])
-		i += 1
-	
-	"""
-	""Quicky hack
-	"""
-	for i in range( len(wikipediaLinks) ):
-		wikipediaLinks[i] = wikipediaLinks[i].strip('[')
-		wikipediaLinks[i] = wikipediaLinks[i].strip(']')
-		wikipediaLinks[i] = "[[" + wikipediaLinks[i] + "]]"
-	
-	print wikipediaLinks
-	"""for Page in wikipediaLinkPages:
-	"""
-	"""
-	"" Edit the page to reflect findings
-	"""
-	
-	for link in wikipediaLinks:
+	for link in linksOnWikipedia:
 		if linkName(link) == None:
 			print linkURL(link)
 			newLink = "[[w:" + linkURL(link) + "|" + linkURL(link) + "]]"
@@ -198,8 +188,8 @@ class DeWikify:
 
 	for cite in cites:
 		newText = newText.replace(cite, '')
-		
-
+	
+	
 	text = newText
 	
 	"""
