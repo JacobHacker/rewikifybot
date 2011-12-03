@@ -158,16 +158,6 @@ class DeWikify:
 		i += 1
 	
 	#
-	# Duct tape
-	#
-	#print "linksOnWikipedia"
-	#print linksOnWikipedia
-	#for i in range( len(linksOnWikipedia) ):
-	#	linksOnWikipedia[i] = linksOnWikipedia[i].strip('[')
-	#	linksOnWikipedia[i] = linksOnWikipedia[i].strip(']')
-	#	linksOnWikipedia[i] = "[[" + linksOnWikipedia[i] + "]]"
-	
-	#
 	# remove redlinks, and change wikipedia links to use w:
 	#
 	
