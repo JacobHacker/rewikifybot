@@ -97,14 +97,28 @@ class DeWikify:
 	linkRegex = re.compile("\[\[.*?]]")
 	linksFoundInPage = linkRegex.findall(text)
 	
+	# Remove items that aren't links
+	cleanLinks = []
+	for link in linksFoundInPage:
+		if link.find("#") == -1:
+			continue
+		elif link.find("Image:") == -1:
+			continue
+		elif link.find("File:") == -1:
+			continue
+		else
+			cleanLinks.append(link)
+	
+	linksFoundInPage = cleanLinks
+	
 	pregen = pagegenerators.PreloadingGenerator(self.generator)
 	
-	# populate wikibooksPages
+	# Download wikibooksPages
 	for link in linksFoundInPage:
 		wikibooksPages.append( pywikibot.Page( page.site(), linkURL(link) ) )
 	pywikibot.getall(page.site(), wikibooksPages)
 	
-	# populate wikipediaPages
+	# Download wikipediaPages
 	wikipediaSite = pywikibot.getSite(page.site().language(), 'wikipedia')
 	for link in linksFoundInPage:
 		wikipediaPages.append( pywikibot.Page( wikipediaSite, linkURL(link)) )
