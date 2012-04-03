@@ -157,11 +157,7 @@ class DeWikify:
 		if linkName(link) == None:
 			newText = newText.replace(link, linkURL(link))
 		else:
-			newText = newText.replace(link, linkName(link) )
-
-	for cite in cites:
-		newText = newText.replace(cite, '')
-	
+			newText = newText.replace(link, linkName(link) )	
 	
 	text = newText
 	
@@ -243,8 +239,6 @@ def main():
     for arg in pywikibot.handleArgs():
         if arg.startswith("-dry"):
             dry = True
-        elif arg.startswith("--remove-cites"):
-            removeCites = True
         else:
             # check if a standard argument like
             # -start:XYZ or -ref:Asdf was given.
