@@ -12,4 +12,4 @@ if it's not found there it looks on wikipedia, then finally if nothing is
 found there, it removes the link, this is fairly site specific, and then very 
 user specific. 
 
-ReWikify Bot is under the MIT license, which can be found in the MIT_license file.
+ReWikify Bot is under the MIT license, which can be found in the MIT_license.txt file.
