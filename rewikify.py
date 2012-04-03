@@ -9,7 +9,7 @@
 # This bot uses the pyWikipedia framework.
 
 #
-# (C) Jacob Hacker (aka Hethrir), 2011
+# (c) Jacob Hacker (aka Hethrir), 2011-2012
 #
 # Distributed under the terms of the MIT license.
 #
