@@ -68,6 +68,10 @@ class DeWikify:
 	""  exist on Wikipedia, if not removes the link entirely. Also remove 
 	""  all "citation needed" tags.
 	"""
+	
+	text = self.load(page)
+	newText = text	
+	
 	linksFoundInPage = []
 	wikibooksPages = []
 	wikipediaPages = []
@@ -88,45 +92,10 @@ class DeWikify:
 			return link[ :link.find("|")]
 		else: return link
 	
-	text = self.load(page)
-	newText = text
 	
-	cites = []
-	c = -1
-	l = -1
-	for i in range( len(text) ):
-		"""
-		"" Check for links
-		"""
-		if text[i] == '[' and text[i+1] == '[':
-			if(text[i+2] == '#'):
-				continue
-			link = ""
-			while text[i] != ']' and text[i-1] != ']':
-				link += text[i]
-				i += 1
-			if linkURL(link)[:2] == "w:" or linkURL(link)[:5] == "Image" or linkURL(link)[:4] == "File":
-				continue
-			link += "]]"
-			linksFoundInPage.append(link)
-		"""
-		"" Check for citations
-		"""
-		if self.removeCites == True:
-			#print "Removing cites"
-			if text[i] == '[' and text[i+1] != '[' and text[i-1] != '[':
-				cite = ""
-				while text[i-1] != ']':
-					cite += text[i]
-					i += 1
-				cites.append(cite)
-			if text[i] == '{' and text[i+1] == '{':
-				cite = ""
-				while text[i-1] != '}':
-					cite += text[i]
-					i += 1
-				if cite == "{{Citation needed}}":
-					cites.append(cite)
+	# Matches text between "[[" and "]]"
+	linkRegex = re.compile("\[\[.*?]]")
+	linksFoundInPage = linkRegex.findall(text)
 	
 	pregen = pagegenerators.PreloadingGenerator(self.generator)
 	
