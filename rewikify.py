@@ -100,14 +100,16 @@ class DeWikify:
 	# Remove items that aren't links
 	cleanLinks = []
 	for link in linksFoundInPage:
-		if link.find("#") == -1:
+		if link.find("#") != -1:
 			continue
-		elif link.find("Image:") == -1:
+		elif link.find("Image:") != -1:
 			continue
-		elif link.find("File:") == -1:
+		elif link.find("File:") != -1:
 			continue
-		else
+		else:
 			cleanLinks.append(link)
+	
+	print(cleanLinks)
 	
 	linksFoundInPage = cleanLinks
 	
