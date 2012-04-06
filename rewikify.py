@@ -108,9 +108,7 @@ class DeWikify:
 			continue
 		else:
 			cleanLinks.append(link)
-	
-	print(cleanLinks)
-	
+
 	linksFoundInPage = cleanLinks
 	
 	pregen = pagegenerators.PreloadingGenerator(self.generator)
